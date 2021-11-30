@@ -8,6 +8,7 @@ namespace SEACW2_PathFinding
     {
         static void Main(string[] args)
         {
+            //TODO: get the file name from wherever the file is called in console
             ReadFile("../../../../ACW2_test_data_01.txt");
         }
 
@@ -16,11 +17,13 @@ namespace SEACW2_PathFinding
             List<Node> nodes = new List<Node>();
             StreamReader reader = new StreamReader(fileName);
 
+            //TODO: Check first line says Nodes
             reader.ReadLine();
             string line = reader.ReadLine();
             
             while (line != "Edges")
             {
+                //TODO: Add error checking 
                 string[] nodeInfo = line.Split(',');
                 int id = int.Parse(nodeInfo[0]);
                 string name = nodeInfo[1].Trim('"');
@@ -30,6 +33,27 @@ namespace SEACW2_PathFinding
                 Node node = new Node(id, name, xCoordinate, yCoordinate);
                 nodes.Add(node);
                 line = reader.ReadLine();
+            }
+            
+            while (!reader.EndOfStream)
+            {
+                line = reader.ReadLine();
+                string[] edgeInfo = line.Split(',');
+                int nodeAId = int.Parse(edgeInfo[0]);
+                int nodeBId = int.Parse(edgeInfo[1]);
+                int length = int.Parse(edgeInfo[2]);
+                
+                foreach (Node node in nodes)
+                {
+                    if (node.GetId() == nodeAId)
+                    {
+                        node.AddChildNode(nodeBId, length);
+                    }
+                    else if (node.GetId() == nodeBId)
+                    {
+                        node.AddChildNode(nodeAId, length);
+                    }
+                }
             }
 
             return nodes;
