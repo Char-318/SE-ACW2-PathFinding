@@ -10,6 +10,12 @@ namespace SEACW2_PathFinding
         private int _xCoordinate;
         private int _yCoordinate;
 
+        public int GetId()
+        {
+            int id = _id;
+            return id;
+        }
+
         public Node(int id, string name, int xCoordinate, int yCoordinate)
         {
             _id = id;
