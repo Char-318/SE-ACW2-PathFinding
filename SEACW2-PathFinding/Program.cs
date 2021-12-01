@@ -12,6 +12,13 @@ namespace SEACW2_PathFinding
         {
             //TODO: get the file name from wherever the file is called in console
             ReadFile("../../../../ACW2_test_data_01.txt");
+            
+            Console.WriteLine("Dijkstra's Algorithm:");
+            Node startNode = nodePool.GetNodePool()[0];
+            Node endNode = nodePool.GetNodePool()[11];
+            Dijkstra dijkstra = new Dijkstra(startNode, endNode);
+            string result = dijkstra.Algorithm();
+            Console.WriteLine(result);
         }
 
         public static void ReadFile(string fileName)

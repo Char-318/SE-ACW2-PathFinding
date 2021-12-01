@@ -6,7 +6,6 @@ namespace SEACW2_PathFinding
     {
         private string _name;
         private int _id;
-        //TODO: Change to <Node, int>
         private Dictionary<Node, int> _childNodes { get; } = new Dictionary<Node, int>();
         private int _xCoordinate;
         private int _yCoordinate;
@@ -14,6 +13,11 @@ namespace SEACW2_PathFinding
         public int GetId()
         {
             return _id;
+        }
+
+        public Dictionary<Node, int> GetChildNodes()
+        {
+            return _childNodes;
         }
 
         public Node(int id, string name, int xCoordinate, int yCoordinate)
