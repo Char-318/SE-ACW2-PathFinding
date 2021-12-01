@@ -16,6 +16,11 @@ namespace SEACW2_PathFinding
             return _id;
         }
 
+        public string GetName()
+        {
+            return _name;
+        }
+
         public Dictionary<Node, int> GetChildNodes()
         {
             return _childNodes;

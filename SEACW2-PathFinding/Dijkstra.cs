@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace SEACW2_PathFinding
 {
@@ -56,16 +57,12 @@ namespace SEACW2_PathFinding
                     {
                         if (_unvisited[j].GetNode() == targetNode)
                         {
-                            if (_unvisited[j]._distanceToNode == -1)
-                            {
-                                _unvisited[j]._distanceToNode = childNodes[targetNode];
-                            }
-                            else if (_unvisited[j]._distanceToNode > distanceToCurrentNode + childNodes[targetNode])
+                            if (_unvisited[j]._distanceToNode == -1 || 
+                                _unvisited[j]._distanceToNode > distanceToCurrentNode + childNodes[targetNode])
                             {
                                 _unvisited[j]._distanceToNode = distanceToCurrentNode + childNodes[targetNode];
+                                _unvisited[j]._previousNode = currentNode;
                             }
-                            
-                            _unvisited[j]._previousNode = currentNode;
                         }
                     }
                 }
@@ -80,7 +77,43 @@ namespace SEACW2_PathFinding
                 }
             }
 
-            return "Placeholder";
+            string route = "";
+            Node endingNode = _endNode;
+            Node previousNode = _endNode;
+            
+            for (int i = 0; i < _visited.Count; i++)
+            {
+                if (_visited[i].GetNode() == endingNode)
+                {
+                    int shortestDistance = _visited[i]._distanceToNode;
+                    string nodeName = _visited[i].GetNode().GetName();
+                    route = nodeName + " " + shortestDistance;
+                    break;
+                }
+            }
+            
+            while (previousNode != null)
+            {
+                for (int i = 0; i < _visited.Count; i++)
+                {
+                    if (_visited[i].GetNode() == endingNode)
+                    {
+                        previousNode = _visited[i]._previousNode;
+
+                        for (int j = 0; j < _visited.Count; j++)
+                        {
+                            if (_visited[j].GetNode() == previousNode)
+                            {
+                                string prevNodeName = _visited[j].GetNode().GetName();
+                                route = route.Insert(0, prevNodeName + "-");
+                                endingNode = previousNode;
+                            } 
+                        }
+                    }
+                }
+            }
+
+            return route;
         }
     }
 }
