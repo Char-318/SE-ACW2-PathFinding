@@ -36,7 +36,7 @@ namespace SEACW2_PathFinding
 
         public object Clone()
         {
-            Node nodeClone = new Node(_id, _name, _xCoordinate, _yCoordinate);
+            var nodeClone = new Node(_id, _name, _xCoordinate, _yCoordinate);
             nodeClone._childNodes = _childNodes;
 
             return nodeClone;
