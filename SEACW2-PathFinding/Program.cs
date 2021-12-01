@@ -9,7 +9,8 @@ namespace SEACW2_PathFinding
         static void Main(string[] args)
         {
             //TODO: get the file name from wherever the file is called in console
-            ReadFile("../../../../ACW2_test_data_01.txt");
+            List<Node> nodes = ReadFile("../../../../ACW2_test_data_01.txt");
+            NodeObjectPool nodePool = new NodeObjectPool(nodes);
         }
 
         public static List<Node> ReadFile(string fileName)
