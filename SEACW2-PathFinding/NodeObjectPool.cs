@@ -10,5 +10,10 @@ namespace SEACW2_PathFinding
         {
             _nodes = nodes;
         }
+
+        public List<Node> GetNodePool()
+        {
+            return _nodes;
+        }
     }
 }

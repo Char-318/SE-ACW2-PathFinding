@@ -6,14 +6,15 @@ namespace SEACW2_PathFinding
 {
     class Program
     {
+        public static NodeObjectPool nodePool;
+        
         static void Main(string[] args)
         {
             //TODO: get the file name from wherever the file is called in console
-            List<Node> nodes = ReadFile("../../../../ACW2_test_data_01.txt");
-            NodeObjectPool nodePool = new NodeObjectPool(nodes);
+            ReadFile("../../../../ACW2_test_data_01.txt");
         }
 
-        public static List<Node> ReadFile(string fileName)
+        public static void ReadFile(string fileName)
         {
             List<Node> nodes = new List<Node>();
             StreamReader reader = new StreamReader(fileName);
@@ -36,6 +37,8 @@ namespace SEACW2_PathFinding
                 line = reader.ReadLine();
             }
             
+            nodePool = new NodeObjectPool(nodes);
+
             while (!reader.EndOfStream)
             {
                 line = reader.ReadLine();
@@ -43,21 +46,23 @@ namespace SEACW2_PathFinding
                 int nodeAId = int.Parse(edgeInfo[0]);
                 int nodeBId = int.Parse(edgeInfo[1]);
                 int length = int.Parse(edgeInfo[2]);
+                Node nodeA = null, nodeB = null;
                 
-                foreach (Node node in nodes)
+                foreach (Node node in nodePool.GetNodePool())
                 {
                     if (node.GetId() == nodeAId)
                     {
-                        node.AddChildNode(nodeBId, length);
+                        nodeA = node;
                     }
                     else if (node.GetId() == nodeBId)
                     {
-                        node.AddChildNode(nodeAId, length);
+                        nodeB = node;
                     }
                 }
+                
+                nodeA.AddChildNode(nodeB, length);
+                nodeB.AddChildNode(nodeA, length);
             }
-
-            return nodes;
         }
     }
 }

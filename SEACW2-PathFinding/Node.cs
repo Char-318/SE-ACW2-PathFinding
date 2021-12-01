@@ -6,14 +6,14 @@ namespace SEACW2_PathFinding
     {
         private string _name;
         private int _id;
-        private Dictionary<int, int> _childNodes { get; } = new Dictionary<int, int>();
+        //TODO: Change to <Node, int>
+        private Dictionary<Node, int> _childNodes { get; } = new Dictionary<Node, int>();
         private int _xCoordinate;
         private int _yCoordinate;
 
         public int GetId()
         {
-            int id = _id;
-            return id;
+            return _id;
         }
 
         public Node(int id, string name, int xCoordinate, int yCoordinate)
@@ -24,9 +24,9 @@ namespace SEACW2_PathFinding
             _yCoordinate = yCoordinate;
         }
 
-        public void AddChildNode(int childId, int length)
+        public void AddChildNode(Node childNode, int length)
         {
-            _childNodes.Add(childId, length);
+            _childNodes.Add(childNode, length);
         }
     }
 }
