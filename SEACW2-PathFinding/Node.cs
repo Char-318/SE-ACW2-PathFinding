@@ -1,12 +1,13 @@
+using System;
 using System.Collections.Generic;
 
 namespace SEACW2_PathFinding
 {
-    public class Node
+    public class Node : ICloneable
     {
         private string _name;
         private int _id;
-        private Dictionary<Node, int> _childNodes { get; } = new Dictionary<Node, int>();
+        private Dictionary<Node, int> _childNodes = new Dictionary<Node, int>();
         private int _xCoordinate;
         private int _yCoordinate;
 
@@ -31,6 +32,14 @@ namespace SEACW2_PathFinding
         public void AddChildNode(Node childNode, int length)
         {
             _childNodes.Add(childNode, length);
+        }
+
+        public object Clone()
+        {
+            Node nodeClone = new Node(_id, _name, _xCoordinate, _yCoordinate);
+            nodeClone._childNodes = _childNodes;
+
+            return nodeClone;
         }
     }
 }
