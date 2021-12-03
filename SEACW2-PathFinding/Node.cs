@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SEACW2_PathFinding
 {
-    public class Node : ICloneable
+    public class Node
     {
         private string _name;
         private int _id;
@@ -26,6 +26,16 @@ namespace SEACW2_PathFinding
             return _childNodes;
         }
 
+        public int GetXCoordinate()
+        {
+            return _xCoordinate;
+        }
+        
+        public int GetYCoordinate()
+        {
+            return _yCoordinate;
+        }
+
         public Node(int id, string name, int xCoordinate, int yCoordinate)
         {
             _id = id;
@@ -37,14 +47,6 @@ namespace SEACW2_PathFinding
         public void AddChildNode(Node childNode, int length)
         {
             _childNodes.Add(childNode, length);
-        }
-
-        public object Clone()
-        {
-            var nodeClone = new Node(_id, _name, _xCoordinate, _yCoordinate);
-            nodeClone._childNodes = _childNodes;
-
-            return nodeClone;
         }
     }
 }

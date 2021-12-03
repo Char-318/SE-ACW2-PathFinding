@@ -6,7 +6,7 @@ namespace SEACW2_PathFinding
 {
     class Program
     {
-        public static NodeObjectPool nodePool;
+        public static NodeObjectPool _nodePool;
         
         static void Main(string[] args)
         {
@@ -14,10 +14,15 @@ namespace SEACW2_PathFinding
             ReadFile("../../../../ACW2_test_data_01.txt");
             
             Console.WriteLine("Dijkstra's Algorithm:");
-            Node startNode = nodePool.GetNodePool()[0];
-            Node endNode = nodePool.GetNodePool()[11];
+            Node startNode = _nodePool.GetNodePool()[0];
+            Node endNode = _nodePool.GetNodePool()[11];
             Dijkstra dijkstra = new Dijkstra(startNode, endNode);
             string result = dijkstra.Algorithm();
+            Console.WriteLine(result);
+
+            Console.WriteLine("A* Algorithm");
+            AStar aStar = new AStar(startNode, endNode);
+            result = aStar.Algorithm();
             Console.WriteLine(result);
         }
 
@@ -44,7 +49,7 @@ namespace SEACW2_PathFinding
                 line = reader.ReadLine();
             }
             
-            nodePool = new NodeObjectPool(nodes);
+            _nodePool = new NodeObjectPool(nodes);
 
             while (!reader.EndOfStream)
             {
@@ -55,7 +60,7 @@ namespace SEACW2_PathFinding
                 int length = int.Parse(edgeInfo[2]);
                 Node nodeA = null, nodeB = null;
                 
-                foreach (Node node in nodePool.GetNodePool())
+                foreach (Node node in _nodePool.GetNodePool())
                 {
                     if (node.GetId() == nodeAId)
                     {

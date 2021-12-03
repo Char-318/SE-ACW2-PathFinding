@@ -8,7 +8,6 @@ namespace SEACW2_PathFinding
     {
         private List<DijkstraNode> _unvisited = new List<DijkstraNode>(); 
         private List<DijkstraNode> _visited = new List<DijkstraNode>();
-        
         private Node _startNode, _endNode;
 
         public Dijkstra(Node startNode, Node endNode)
@@ -16,7 +15,7 @@ namespace SEACW2_PathFinding
             _startNode = startNode;
             _endNode = endNode;
             
-            foreach (Node node in Program.nodePool.GetNodePool())
+            foreach (Node node in Program._nodePool.GetNodePool())
             {
                 if (node == _startNode)
                 {
