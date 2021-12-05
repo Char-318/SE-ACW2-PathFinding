@@ -9,6 +9,7 @@ namespace SEACW2_PathFinding
         private Node _endNode;
         private List<AStarNode> _open = new List<AStarNode>();
         private List<AStarNode> _closed = new List<AStarNode>();
+        private AStarNode _currentNode;
 
         public AStar(Node startNode, Node endNode)
         {
@@ -26,80 +27,59 @@ namespace SEACW2_PathFinding
             return _endNode;
         }
 
-        public string Algorithm()
+        private void FindShortestF()
         {
-            AStarNode currentNode = new AStarNode(_startNode, _endNode);
-            _open.Add(currentNode);
-
-            while (_open.Count != 0)
+            double shortestF = -1; 
+                    
+            foreach (AStarNode node in _open)
             {
-                double shortestF = -1; 
-                    
-                foreach (AStarNode node in _open)
+                if (shortestF == -1 || node.GetF() < shortestF)
                 {
-                    if (shortestF == -1 || node.GetF() < shortestF)
-                    {
-                        shortestF = node.GetF();
-                        currentNode = node;
-                    }
+                    shortestF = node.GetF();
+                    _currentNode = node;
                 }
-                
-                _closed.Add(currentNode);
-                _open.Remove(currentNode);
+            }
+        }
 
-                if (currentNode.GetNode() == _endNode)
-                {
-                    break;
-                }
+        private AStarNode CreateNewNode(Node child)
+        {
+            AStarNode newNode = new AStarNode(child, _currentNode, _endNode);
+            newNode.CalculateF();
 
-                foreach (Node child in currentNode.GetNode().GetChildNodes().Keys)
-                {
-                    bool isClosed = false;
-                    
-                    foreach (AStarNode closedNode in _closed)
-                    {
-                        if (child == closedNode.GetNode())
-                        {
-                            isClosed = true;
-                            break;
-                        }
-                    }
+            return newNode;
+        }
 
-                    if (!isClosed)
-                    {
-                        bool isOpen = false;
+        private void AlterOpenList(Node child)
+        {
+            bool isOpen = false;
                         
-                        foreach (AStarNode openNode in _open)
-                        {
-                            if (child == openNode.GetNode())
-                            {
-                                isOpen = true;
-                                
-                                AStarNode newNode = new AStarNode(child, currentNode, _endNode);
-                                newNode.CalculateF();
+            foreach (AStarNode openNode in _open)
+            {
+                if (child == openNode.GetNode())
+                {
+                    isOpen = true;
+                    AStarNode newNode = CreateNewNode(child);
 
-                                if (newNode.GetG() < openNode.GetG())
-                                {
-                                    _open.Remove(openNode);
-                                    _open.Add(newNode);
-                                }
-                                
-                                break;
-                            }
-                        }
-
-                        if (!isOpen)
-                        {
-                            AStarNode newNode = new AStarNode(child, currentNode, _endNode);
-                            newNode.CalculateF();
-                            _open.Add(newNode);
-                        }
+                    if (newNode.GetG() < openNode.GetG())
+                    {
+                        _open.Remove(openNode);
+                        _open.Add(newNode);
                     }
+                                
+                    break;
                 }
             }
 
+            if (!isOpen)
+            {
+                AStarNode newNode = CreateNewNode(child);
+                _open.Add(newNode);
+            }
+        }
+
+        private string DisplayShortestPath()
+        {
             string route;
-            Node endingNode;
             AStarNode endingAStarNode = _closed.Last();
             Node previousNode;
             
@@ -114,6 +94,46 @@ namespace SEACW2_PathFinding
                 endingAStarNode = endingAStarNode.GetPreviousNode();
             } while (previousNode != _startNode);
 
+            return route;
+        }
+
+        public string Algorithm()
+        {
+            _currentNode = new AStarNode(_startNode, _endNode);
+            _open.Add(_currentNode);
+
+            while (_open.Count != 0)
+            {
+                FindShortestF();
+                _closed.Add(_currentNode);
+                _open.Remove(_currentNode);
+
+                if (_currentNode.GetNode() == _endNode)
+                {
+                    break;
+                }
+
+                foreach (Node child in _currentNode.GetNode().GetChildNodes().Keys)
+                {
+                    bool isClosed = false;
+                    
+                    foreach (AStarNode closedNode in _closed)
+                    {
+                        if (child == closedNode.GetNode())
+                        {
+                            isClosed = true;
+                            break;
+                        }
+                    }
+
+                    if (!isClosed)
+                    {
+                        AlterOpenList(child);
+                    }
+                }
+            }
+
+            string route = DisplayShortestPath();
             return route; 
         }
     }
