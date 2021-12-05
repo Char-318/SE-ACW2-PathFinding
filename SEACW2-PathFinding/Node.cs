@@ -21,6 +21,16 @@ namespace SEACW2_PathFinding
             return _name;
         }
 
+        public int GetX()
+        {
+            return _xCoordinate;
+        }
+
+        public int GetY()
+        {
+            return _yCoordinate;
+        }
+
         public Dictionary<Node, int> GetChildNodes()
         {
             return _childNodes;

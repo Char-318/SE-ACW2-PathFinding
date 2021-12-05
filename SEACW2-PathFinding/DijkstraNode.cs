@@ -3,13 +3,13 @@ namespace SEACW2_PathFinding
     public class DijkstraNode
     {
         private Node _node;
-        public int _distanceToNode;
-        public Node _previousNode;
+        public int DistanceToNode;
+        public Node PreviousNode;
 
         public DijkstraNode(Node node, int distance)
         {
             _node = node;
-            _distanceToNode = distance;
+            DistanceToNode = distance;
         }
 
         public Node GetNode()

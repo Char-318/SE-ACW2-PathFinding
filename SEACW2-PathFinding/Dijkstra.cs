@@ -10,23 +10,12 @@ namespace SEACW2_PathFinding
         private List<DijkstraNode> _visited = new List<DijkstraNode>();
         private Node _startNode, _endNode;
         private Node _currentNode;
-
+        public NodeObjectPool NodePool = Program.NodePool;
+        
         public Dijkstra(Node startNode, Node endNode)
         {
             _startNode = startNode;
             _endNode = endNode;
-            
-            foreach (Node node in Program._nodePool.GetNodePool())
-            {
-                if (node == _startNode)
-                {
-                    _unvisited.Add(new DijkstraNode(node, 0));
-                }
-                else
-                {
-                    _unvisited.Add(new DijkstraNode(node, -1));
-                }
-            }
         }
 
         public int FindShortestDistance()
@@ -36,7 +25,7 @@ namespace SEACW2_PathFinding
                 
             for (int i = 0; i < _unvisited.Count; i++)
             {
-                int nodeDistance = _unvisited[i]._distanceToNode;
+                int nodeDistance = _unvisited[i].DistanceToNode;
                     
                 if (nodeDistance != -1 && (nodeDistance < distanceToCurrentNode || distanceToCurrentNode == -1))
                 {
@@ -70,7 +59,7 @@ namespace SEACW2_PathFinding
             {
                 if (_visited[i].GetNode() == endingNode)
                 {
-                    int shortestDistance = _visited[i]._distanceToNode;
+                    int shortestDistance = _visited[i].DistanceToNode;
                     string nodeName = _visited[i].GetNode().GetName();
                     route = nodeName + " " + shortestDistance;
                     break;
@@ -83,7 +72,7 @@ namespace SEACW2_PathFinding
                 {
                     if (_visited[i].GetNode() == endingNode)
                     {
-                        previousNode = _visited[i]._previousNode;
+                        previousNode = _visited[i].PreviousNode;
 
                         for (int j = 0; j < _visited.Count; j++)
                         {
@@ -103,6 +92,18 @@ namespace SEACW2_PathFinding
 
         public string Algorithm()
         {
+            foreach (Node node in NodePool.GetNodePool())
+            {
+                if (node == _startNode)
+                {
+                    _unvisited.Add(new DijkstraNode(node, 0));
+                }
+                else
+                {
+                    _unvisited.Add(new DijkstraNode(node, -1));
+                }
+            }
+            
             while (_unvisited.Count != 0)
             {
                 int distanceToCurrentNode = FindShortestDistance();
@@ -120,11 +121,11 @@ namespace SEACW2_PathFinding
 
                     for (int j = 0; j < _unvisited.Count; j++)
                     {
-                        if (_unvisited[j].GetNode() == targetNode && (_unvisited[j]._distanceToNode == -1 || 
-                            _unvisited[j]._distanceToNode > distanceToCurrentNode + childNodes[targetNode]))
+                        if (_unvisited[j].GetNode() == targetNode && (_unvisited[j].DistanceToNode == -1 || 
+                            _unvisited[j].DistanceToNode > distanceToCurrentNode + childNodes[targetNode]))
                         {
-                            _unvisited[j]._distanceToNode = distanceToCurrentNode + childNodes[targetNode];
-                            _unvisited[j]._previousNode = _currentNode;
+                            _unvisited[j].DistanceToNode = distanceToCurrentNode + childNodes[targetNode];
+                            _unvisited[j].PreviousNode = _currentNode;
                         }
                     }
                 }
