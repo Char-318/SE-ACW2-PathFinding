@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -131,6 +132,22 @@ namespace SEACW2_PathFinding
                         AlterOpenList(child);
                     }
                 }
+            }
+
+            bool endNodeReached = false;
+            
+            foreach (AStarNode node in _closed)
+            {
+                if (node.GetNode() == _endNode)
+                {
+                    endNodeReached = true;
+                    break;
+                }
+            }
+
+            if (!endNodeReached)
+            {
+                throw new FormatException("No path to target node.");
             }
 
             string route = DisplayShortestPath();

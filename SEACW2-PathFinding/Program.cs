@@ -26,25 +26,81 @@ namespace SEACW2_PathFinding
             Console.WriteLine(result);
         }
 
-        public static void ReadFile(string fileName)
+        private static Node FormatNodes(string[] nodeInfo)
+        {
+            if (!int.TryParse(nodeInfo[0], out int id))
+            {
+                throw new FormatException("File is in invalid format.");
+            }
+                
+            string name = nodeInfo[1].Trim('"');
+                
+            if (!int.TryParse(nodeInfo[2], out int xCoordinate))
+            {
+                throw new FormatException("File is in invalid format.");
+            }
+
+            if (!int.TryParse(nodeInfo[3], out int yCoordinate))
+            {
+                throw new FormatException("File is in invalid format.");
+            }
+                
+            Node node = new Node(id, name, xCoordinate, yCoordinate);
+
+            return node;
+        }
+
+        private static void FormatEdges(string[] edgeInfo, out Node nodeA, out Node nodeB, out int length)
+        {
+            if (!int.TryParse(edgeInfo[0], out int nodeAId))
+            {
+                throw new FormatException("File is in invalid format.");
+            }
+
+            if (!int.TryParse(edgeInfo[1], out int nodeBId))
+            {
+                throw new FormatException("File is in invalid format.");
+            }
+
+            if (!int.TryParse(edgeInfo[2], out length))
+            {
+                throw new FormatException("File is in invalid format.");
+            }
+
+            nodeA = null;
+            nodeB = null;
+                
+            foreach (Node node in _nodePool.GetNodePool())
+            {
+                if (node.GetId() == nodeAId)
+                {
+                    nodeA = node;
+                }
+                else if (node.GetId() == nodeBId)
+                {
+                    nodeB = node;
+                }
+            }
+        }
+        
+        private static void ReadFile(string fileName)
         {
             List<Node> nodes = new List<Node>();
             StreamReader reader = new StreamReader(fileName);
 
-            //TODO: Check first line says Nodes
-            reader.ReadLine();
             string line = reader.ReadLine();
+            if (line != "Nodes")
+            {
+                throw new FormatException("File is in invalid format.");
+            }
+            
+            line = reader.ReadLine();
             
             while (line != "Edges")
             {
-                //TODO: Add error checking 
                 string[] nodeInfo = line.Split(',');
-                int id = int.Parse(nodeInfo[0]);
-                string name = nodeInfo[1].Trim('"');
-                int xCoordinate = int.Parse(nodeInfo[2]);
-                int yCoordinate = int.Parse(nodeInfo[3]);
-                
-                Node node = new Node(id, name, xCoordinate, yCoordinate);
+
+                Node node = FormatNodes(nodeInfo);
                 nodes.Add(node);
                 line = reader.ReadLine();
             }
@@ -55,21 +111,12 @@ namespace SEACW2_PathFinding
             {
                 line = reader.ReadLine();
                 string[] edgeInfo = line.Split(',');
-                int nodeAId = int.Parse(edgeInfo[0]);
-                int nodeBId = int.Parse(edgeInfo[1]);
-                int length = int.Parse(edgeInfo[2]);
-                Node nodeA = null, nodeB = null;
-                
-                foreach (Node node in _nodePool.GetNodePool())
+
+                FormatEdges(edgeInfo, out Node nodeA, out Node nodeB, out int length);
+
+                if (nodeA == null || nodeB == null)
                 {
-                    if (node.GetId() == nodeAId)
-                    {
-                        nodeA = node;
-                    }
-                    else if (node.GetId() == nodeBId)
-                    {
-                        nodeB = node;
-                    }
+                    throw new FormatException("Edge connects to invalid node");
                 }
                 
                 nodeA.AddChildNode(nodeB, length);

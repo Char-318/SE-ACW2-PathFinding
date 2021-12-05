@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace SEACW2_PathFinding
 {
@@ -106,6 +106,12 @@ namespace SEACW2_PathFinding
             while (_unvisited.Count != 0)
             {
                 int distanceToCurrentNode = FindShortestDistance();
+
+                if (distanceToCurrentNode == -1)
+                {
+                    throw new FormatException("No path to target node.");
+                }
+                
                 Dictionary<Node, int> childNodes = _currentNode.GetChildNodes();
 
                 for (int i = 0; i < childNodes.Count; i++)
