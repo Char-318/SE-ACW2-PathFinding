@@ -9,6 +9,7 @@ namespace SEACW2_PathFinding
         private List<DijkstraNode> _unvisited = new List<DijkstraNode>(); 
         private List<DijkstraNode> _visited = new List<DijkstraNode>();
         private Node _startNode, _endNode;
+        private Node _currentNode;
 
         public Dijkstra(Node startNode, Node endNode)
         {
@@ -28,54 +29,39 @@ namespace SEACW2_PathFinding
             }
         }
 
-        public string Algorithm()
+        public int FindShortestDistance()
         {
-            while (_unvisited.Count != 0)
-            {
-                int distanceToCurrentNode = -1;
-                Node currentNode = _startNode;
+            int distanceToCurrentNode = -1;
+            _currentNode = _startNode;
                 
-                for (int i = 0; i < _unvisited.Count; i++)
-                {
-                    int nodeDistance = _unvisited[i]._distanceToNode;
+            for (int i = 0; i < _unvisited.Count; i++)
+            {
+                int nodeDistance = _unvisited[i]._distanceToNode;
                     
-                    if (nodeDistance != -1 && (nodeDistance < distanceToCurrentNode || distanceToCurrentNode == -1))
-                    {
-                        distanceToCurrentNode = nodeDistance;
-                        currentNode = _unvisited[i].GetNode();
-                    }
-                }
-
-                Dictionary<Node, int> childNodes = currentNode.GetChildNodes();
-
-                for (int i = 0; i < childNodes.Count; i++)
+                if (nodeDistance != -1 && (nodeDistance < distanceToCurrentNode || distanceToCurrentNode == -1))
                 {
-                    Node targetNode = childNodes.ElementAt(i).Key;
-
-                    for (int j = 0; j < _unvisited.Count; j++)
-                    {
-                        if (_unvisited[j].GetNode() == targetNode)
-                        {
-                            if (_unvisited[j]._distanceToNode == -1 || 
-                                _unvisited[j]._distanceToNode > distanceToCurrentNode + childNodes[targetNode])
-                            {
-                                _unvisited[j]._distanceToNode = distanceToCurrentNode + childNodes[targetNode];
-                                _unvisited[j]._previousNode = currentNode;
-                            }
-                        }
-                    }
-                }
-
-                for (int i = 0; i < _unvisited.Count; i++)
-                {
-                    if (_unvisited[i].GetNode() == currentNode)
-                    {
-                        _visited.Add(_unvisited[i]);
-                        _unvisited.RemoveAt(i);
-                    }
+                    distanceToCurrentNode = nodeDistance;
+                    _currentNode = _unvisited[i].GetNode();
                 }
             }
 
+            return distanceToCurrentNode;
+        }
+
+        private void AddToVisited()
+        {
+            for (int i = 0; i < _unvisited.Count; i++)
+            {
+                if (_unvisited[i].GetNode() == _currentNode)
+                {
+                    _visited.Add(_unvisited[i]);
+                    _unvisited.RemoveAt(i);
+                }
+            }
+        }
+
+        private string DisplayShortestPath()
+        {
             string route = "";
             Node endingNode = _endNode;
             Node previousNode = _endNode;
@@ -112,6 +98,35 @@ namespace SEACW2_PathFinding
                 }
             }
 
+            return route;
+        }
+
+        public string Algorithm()
+        {
+            while (_unvisited.Count != 0)
+            {
+                int distanceToCurrentNode = FindShortestDistance();
+                Dictionary<Node, int> childNodes = _currentNode.GetChildNodes();
+
+                for (int i = 0; i < childNodes.Count; i++)
+                {
+                    Node targetNode = childNodes.ElementAt(i).Key;
+
+                    for (int j = 0; j < _unvisited.Count; j++)
+                    {
+                        if (_unvisited[j].GetNode() == targetNode && (_unvisited[j]._distanceToNode == -1 || 
+                            _unvisited[j]._distanceToNode > distanceToCurrentNode + childNodes[targetNode]))
+                        {
+                            _unvisited[j]._distanceToNode = distanceToCurrentNode + childNodes[targetNode];
+                            _unvisited[j]._previousNode = _currentNode;
+                        }
+                    }
+                }
+
+                AddToVisited();
+            }
+
+            string route = DisplayShortestPath();
             return route;
         }
     }
