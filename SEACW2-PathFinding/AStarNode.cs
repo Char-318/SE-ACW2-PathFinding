@@ -35,9 +35,14 @@ namespace SEACW2_PathFinding
             return _g;
         }
 
-        public Node GetCurrentNode()
+        public Node GetNode()
         {
             return _currentNode;
+        }
+
+        public AStarNode GetPreviousNode()
+        {
+            return _previousAStarNode;
         }
         
         public void CalculateF()

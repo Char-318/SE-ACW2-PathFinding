@@ -47,18 +47,18 @@ namespace SEACW2_PathFinding
                 _closed.Add(currentNode);
                 _open.Remove(currentNode);
 
-                if (currentNode.GetCurrentNode() == _endNode)
+                if (currentNode.GetNode() == _endNode)
                 {
                     break;
                 }
 
-                foreach (Node child in currentNode.GetCurrentNode().GetChildNodes().Keys)
+                foreach (Node child in currentNode.GetNode().GetChildNodes().Keys)
                 {
                     bool isClosed = false;
                     
                     foreach (AStarNode closedNode in _closed)
                     {
-                        if (child == closedNode.GetCurrentNode())
+                        if (child == closedNode.GetNode())
                         {
                             isClosed = true;
                             break;
@@ -71,7 +71,7 @@ namespace SEACW2_PathFinding
                         
                         foreach (AStarNode openNode in _open)
                         {
-                            if (child == openNode.GetCurrentNode())
+                            if (child == openNode.GetNode())
                             {
                                 isOpen = true;
                                 
@@ -98,7 +98,23 @@ namespace SEACW2_PathFinding
                 }
             }
 
-            return "placeholder"; 
+            string route;
+            Node endingNode;
+            AStarNode endingAStarNode = _closed.Last();
+            Node previousNode;
+            
+            int shortestDistance = endingAStarNode.GetG();
+            string nodeName = endingAStarNode.GetNode().GetName();
+            route = nodeName + " " + shortestDistance;
+
+            do
+            {
+                previousNode = endingAStarNode.GetPreviousNode().GetNode();
+                route = route.Insert(0, previousNode.GetName() + "-");
+                endingAStarNode = endingAStarNode.GetPreviousNode();
+            } while (previousNode != _startNode);
+
+            return route; 
         }
     }
 }
