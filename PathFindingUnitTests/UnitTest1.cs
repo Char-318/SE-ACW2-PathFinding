@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
@@ -15,8 +16,6 @@ namespace PathFindingUnitTests
         public static FileData FileData;
 
         //TODO: Test if error thrown when incorrect arguments given
-        //TODO: Test if error thrown when the file is in incorrect format
-        //TODO: Test if error thrown if there is no route to the target node
 
         [ClassInitialize]
         public static void ClassInitialiser(TestContext testContext)
@@ -47,8 +46,8 @@ namespace PathFindingUnitTests
             ListOfNodes.Add(nodeD);
             ListOfNodes.Add(nodeE);
             
-            NodePool = new NodeObjectPool(ListOfNodes);
             Dijkstra = new Dijkstra(nodeA, nodeE);
+            NodePool = new NodeObjectPool(ListOfNodes);
             Dijkstra.NodePool = NodePool;
             AStar = new AStar(nodeA, nodeE);
             FileData = new FileData();
@@ -102,6 +101,86 @@ namespace PathFindingUnitTests
                     Assert.Fail();
                 }
             }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(FormatException))]
+        public void TestFileFormat()
+        {
+            FileData.ReadFile("../../../../ACW2_test_data_04.txt");
+            FileData.ReadFile("../../../../ACW2_test_data_05.txt");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(FormatException))]
+        public void TestNodeFormat()
+        {
+            string[] test1 = {"A", "\"A\"", "1", "2"};
+            string[] test2 = {"1", "A", "1", "2"};
+            string[] test3 = {"1", "\"A\"", "A", "2"};
+            string[] test4 = {"1", "\"A\"", "1", "A"};
+            
+            FileData.FormatNodes(test1);
+            FileData.FormatNodes(test2);
+            FileData.FormatNodes(test3);
+            FileData.FormatNodes(test4);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(FormatException))]
+        public void TestEdgeFormat()
+        {
+            string[] test1 = {"A", "1", "2"};
+            string[] test2 = {"1", "A", "1"};
+            string[] test3 = {"1", "2", "A"};
+            
+            FileData.FormatEdges(test1, out Node nodeA, out Node nodeB, out int lenth);
+            FileData.FormatEdges(test2, out nodeA, out nodeB, out lenth);
+            FileData.FormatEdges(test3, out nodeA, out nodeB, out lenth);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(FormatException))]
+        public void TestNoPathDijkstra()
+        {
+            Node nodeA = new Node(1, "A", 1, 2);
+            Node nodeB = new Node(2, "B", 2, 3);
+            Node nodeC = new Node(3, "C", 4, 5);
+            
+            List<Node> ListOfNodes = new List<Node>();
+            ListOfNodes.Add(nodeA);
+            ListOfNodes.Add(nodeB);
+            ListOfNodes.Add(nodeC);
+            
+            nodeA.AddChildNode(nodeB, 1);
+            nodeB.AddChildNode(nodeA, 1);
+            
+            Dijkstra = new Dijkstra(nodeA, nodeC);
+            NodePool = new NodeObjectPool(ListOfNodes);
+            Dijkstra.NodePool = NodePool;
+
+            Dijkstra.Algorithm();
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(FormatException))]
+        public void TestNoPathAStar()
+        {
+            Node nodeA = new Node(1, "A", 1, 2);
+            Node nodeB = new Node(2, "B", 2, 3);
+            Node nodeC = new Node(3, "C", 4, 5);
+            
+            List<Node> ListOfNodes = new List<Node>();
+            ListOfNodes.Add(nodeA);
+            ListOfNodes.Add(nodeB);
+            ListOfNodes.Add(nodeC);
+            
+            nodeA.AddChildNode(nodeB, 1);
+            nodeB.AddChildNode(nodeA, 1);
+            
+            AStar = new AStar(nodeA, nodeC);
+
+            AStar.Algorithm();
         }
     }
 }
