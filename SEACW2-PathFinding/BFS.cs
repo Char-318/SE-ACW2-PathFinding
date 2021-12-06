@@ -19,7 +19,7 @@ namespace SEACW2_PathFinding
             _endNode = endNode;
         }
 
-        public string Algorithm()
+        private void FindStartingnode()
         {
             foreach (Node node in NodePool.GetNodePool())
             {
@@ -29,58 +29,31 @@ namespace SEACW2_PathFinding
                     break;
                 }
             }
+        }
 
-            do
+        private bool CompareDistances(Node childNode, int newDistance)
+        {
+            bool inQueue = false;
+
+            foreach (BFSNode node in _unvisited)
             {
-                _currentBfsNode = _visited.Last();
-                _currentNode = _currentBfsNode.GetNode();
-
-                for (int i = 0; i < _currentNode.GetChildNodes().Count; i++)
+                if (node.GetNode() == childNode)
                 {
-                    Node childNode = _currentNode.GetChildNodes().ElementAt(i).Key;
-                    int distance = _currentNode.GetChildNodes().ElementAt(i).Value;
-                    bool inQueue = false;
-                    bool isVisited = false;
-
-                    foreach (BFSNode visitedNode in _visited)
+                    inQueue = true;
+                    if (node.DistanceToNode == -1 ||
+                        node.DistanceToNode > newDistance + _currentBfsNode.DistanceToNode)
                     {
-                        if (visitedNode.GetNode() == childNode)
-                        {
-                            isVisited = true;
-                        }
-                    }
-                    
-                    if (!isVisited)
-                    {
-                        foreach (BFSNode node in _unvisited)
-                        {
-                            if (node.GetNode() == childNode)
-                            {
-                                inQueue = true;
-                                if (node.DistanceToNode == -1 ||
-                                    node.DistanceToNode > distance + _currentBfsNode.DistanceToNode)
-                                {
-                                    node.DistanceToNode = distance + _currentBfsNode.DistanceToNode;
-                                    node.PreviousNode = _currentBfsNode;
-                                }
-                            }
-                        }
-
-                        if (!inQueue)
-                        {
-                            BFSNode newNode = new BFSNode(childNode, distance + _currentBfsNode.DistanceToNode);
-                            newNode.PreviousNode = _currentBfsNode;
-                            _unvisited.Enqueue(newNode);
-                            
-                        }
+                        node.DistanceToNode = newDistance + _currentBfsNode.DistanceToNode;
+                        node.PreviousNode = _currentBfsNode;
                     }
                 }
-                
-                BFSNode nextNode = _unvisited.Dequeue();
-                _visited.Add(nextNode);
-            } 
-            while (_unvisited.Count != 0);
-            
+            }
+
+            return inQueue;
+        }
+
+        private bool IsValidPath()
+        {
             bool endNodeReached = false;
             
             foreach (BFSNode node in _visited)
@@ -92,11 +65,11 @@ namespace SEACW2_PathFinding
                 }
             }
 
-            if (!endNodeReached)
-            {
-                throw new FormatException("No path to target node.");
-            }
-            
+            return endNodeReached;
+        }
+
+        private string DisplayShortestPath()
+        {
             string route;
             BFSNode endBfsNode = _currentBfsNode;
             Node previousNode;
@@ -121,6 +94,58 @@ namespace SEACW2_PathFinding
                 endBfsNode = endBfsNode.PreviousNode;
             } while (previousNode != _startNode);
 
+            return route;
+        }
+
+        public string Algorithm()
+        {
+            FindStartingnode();
+
+            do
+            {
+                _currentBfsNode = _visited.Last();
+                _currentNode = _currentBfsNode.GetNode();
+
+                for (int i = 0; i < _currentNode.GetChildNodes().Count; i++)
+                {
+                    Node childNode = _currentNode.GetChildNodes().ElementAt(i).Key;
+                    int distance = _currentNode.GetChildNodes().ElementAt(i).Value;
+                    bool isVisited = false;
+
+                    foreach (BFSNode visitedNode in _visited)
+                    {
+                        if (visitedNode.GetNode() == childNode)
+                        {
+                            isVisited = true;
+                        }
+                    }
+                    
+                    if (!isVisited)
+                    {
+                        bool inQueue = CompareDistances(childNode, distance);
+
+                        if (!inQueue)
+                        {
+                            BFSNode newNode = new BFSNode(childNode, distance + _currentBfsNode.DistanceToNode);
+                            newNode.PreviousNode = _currentBfsNode;
+                            _unvisited.Enqueue(newNode);
+                        }
+                    }
+                }
+                
+                BFSNode nextNode = _unvisited.Dequeue();
+                _visited.Add(nextNode);
+            } 
+            while (_unvisited.Count != 0);
+
+            bool endNodeReached = IsValidPath();
+
+            if (!endNodeReached)
+            {
+                throw new FormatException("No path to target node.");
+            }
+
+            string route = DisplayShortestPath();
             return route;
         }
     }
