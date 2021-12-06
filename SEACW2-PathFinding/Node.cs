@@ -54,6 +54,11 @@ namespace SEACW2_PathFinding
             _yCoordinate = yCoordinate;
         }
 
+        /// <summary>
+        /// Add a child node to this node object.
+        /// </summary>
+        /// <param name="childNode"> The child node that should be added to this node. </param>
+        /// <param name="length"> The length of the edge connecting this node to the child. </param>
         public void AddChildNode(Node childNode, int length)
         {
             _childNodes.Add(childNode, length);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SEACW2_PathFinding;
 
@@ -13,9 +14,7 @@ namespace PathFindingUnitTests
         public static NodeObjectPool NodePool;
         public static AStar AStar;
         public static FileData FileData;
-
-        //TODO: Test if error thrown when incorrect arguments given
-
+        
         [ClassInitialize]
         public static void ClassInitialiser(TestContext testContext)
         {

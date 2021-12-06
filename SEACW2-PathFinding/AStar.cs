@@ -17,7 +17,7 @@ namespace SEACW2_PathFinding
             _startNode = startNode;
             _endNode = endNode;
         }
-
+        
         public Node GetStartNode()
         {
             return _startNode;
@@ -28,6 +28,9 @@ namespace SEACW2_PathFinding
             return _endNode;
         }
 
+        /// <summary>
+        /// Calculates which node in the open list has the smallest value of f and sets the current node to that.
+        /// </summary>
         private void FindShortestF()
         {
             double shortestF = -1; 
@@ -42,6 +45,12 @@ namespace SEACW2_PathFinding
             }
         }
 
+        /// <summary>
+        /// Creates a new AStarNode and calculates the value of f. Used when a new node might need to be added to
+        /// the open list.
+        /// </summary>
+        /// <param name="child"> The node that the new AStarNode will refer to. </param>
+        /// <returns> The new AStarNode that was created. </returns>
         private AStarNode CreateNewNode(Node child)
         {
             AStarNode newNode = new AStarNode(child, _currentNode, _endNode);
@@ -50,6 +59,11 @@ namespace SEACW2_PathFinding
             return newNode;
         }
 
+        /// <summary>
+        /// Adds a new node to the open list if the node isn't already there and replaces one if a new shortest path
+        /// to it is found.
+        /// </summary>
+        /// <param name="child"> The node that needs to be found in the open list. </param>
         private void AlterOpenList(Node child)
         {
             bool isOpen = false;
@@ -78,6 +92,10 @@ namespace SEACW2_PathFinding
             }
         }
 
+        /// <summary>
+        /// Backtracks through the nodes previous nodes to find the shortest path to the end node.
+        /// </summary>
+        /// <returns> Returns a string of the shortest path followed by the length of the path. </returns>
         private string DisplayShortestPath()
         {
             string route;
@@ -98,6 +116,13 @@ namespace SEACW2_PathFinding
             return route;
         }
 
+        /// <summary>
+        /// Main method for the A* algorithm. Finds the node in the open list with the smallest f value and adds it to
+        /// the closed list. The shortest f values of the child nodes from this node are calculated. This is run until
+        /// the end node is added to the closed list or it reaches the end of the open list.    
+        /// </summary>
+        /// <returns> Returns a string of the shortest path followed by the length of the path. </returns>
+        /// <exception cref="FormatException"> Throws this exception if there is no valid path to the end node. </exception>
         public string Algorithm()
         {
             _currentNode = new AStarNode(_startNode, _endNode);

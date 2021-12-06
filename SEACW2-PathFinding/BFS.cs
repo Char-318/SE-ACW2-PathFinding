@@ -19,18 +19,12 @@ namespace SEACW2_PathFinding
             _endNode = endNode;
         }
 
-        private void FindStartingnode()
-        {
-            foreach (Node node in NodePool.GetNodePool())
-            {
-                if (node == _startNode)
-                {
-                    _visited.Add(new BFSNode(node, 0));
-                    break;
-                }
-            }
-        }
-
+        /// <summary>
+        /// Calculates if new path is shorter than the current path to that node.
+        /// </summary>
+        /// <param name="childNode"> The node that the shortest path is being calculated for. </param>
+        /// <param name="newDistance"> The newly calculated distance. </param>
+        /// <returns> Returns true if the node is in the unvisited queue, false if not. </returns>
         private bool CompareDistances(Node childNode, int newDistance)
         {
             bool inQueue = false;
@@ -52,6 +46,11 @@ namespace SEACW2_PathFinding
             return inQueue;
         }
 
+        /// <summary>
+        /// Checks if a path was created between the start and end node by checking if the end node is in the
+        /// visited list.
+        /// </summary>
+        /// <returns> Returns true if it is in the list, false if not. </returns>
         private bool IsValidPath()
         {
             bool endNodeReached = false;
@@ -68,6 +67,11 @@ namespace SEACW2_PathFinding
             return endNodeReached;
         }
 
+        /// <summary>
+        /// Backtracks from the end node to the start node using the previous nodes to find which path leads to the
+        /// shortest route given by the algorithm.
+        /// </summary>
+        /// <returns> Returns a string of the path followed by the length that path gives. </returns>
         private string DisplayShortestPath()
         {
             string route;
@@ -97,9 +101,17 @@ namespace SEACW2_PathFinding
             return route;
         }
 
+        /// <summary>
+        /// The main method for calculating the breadth first search. It adds the starting node to the visited list and
+        /// that node's children to the unvisited queue. It then calculates the path to each of the children and adds
+        /// the first child to the visited list and that node's children to the queue. This repeats until the unvisited
+        /// queue is empty.
+        /// </summary>
+        /// <returns> A string of the path followed by the length that path gives. </returns>
+        /// <exception cref="FormatException"> Thrown if there is no path to the end node. </exception>
         public string Algorithm()
         {
-            FindStartingnode();
+            _visited.Add(new BFSNode(_startNode, 0));
 
             do
             {

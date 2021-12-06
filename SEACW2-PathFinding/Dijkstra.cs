@@ -18,10 +18,13 @@ namespace SEACW2_PathFinding
             _endNode = endNode;
         }
 
-        public int FindShortestDistance()
+        /// <summary>
+        /// Finds the node with the current shortest distance in the unvisited list. 
+        /// </summary>
+        /// <returns> The distance to the node that has the shortest distance at this point. </returns>
+        private int FindShortestDistance()
         {
             int distanceToCurrentNode = -1;
-            _currentNode = _startNode;
                 
             for (int i = 0; i < _unvisited.Count; i++)
             {
@@ -37,6 +40,9 @@ namespace SEACW2_PathFinding
             return distanceToCurrentNode;
         }
 
+        /// <summary>
+        /// Adds the current node to the visited list.
+        /// </summary>
         private void AddToVisited()
         {
             for (int i = 0; i < _unvisited.Count; i++)
@@ -49,6 +55,11 @@ namespace SEACW2_PathFinding
             }
         }
 
+        /// <summary>
+        /// Backtracks through each node to work out what the shortest path is using the previous nodes and turns that
+        /// into a string. 
+        /// </summary>
+        /// <returns> A string of the shortest path and the length of that. </returns>
         private string DisplayShortestPath()
         {
             string route = "";
@@ -90,6 +101,15 @@ namespace SEACW2_PathFinding
             return route;
         }
 
+        /// <summary>
+        /// The main method for Dijkstra's algorithm. Adds all nodes to the unvisited list with the starting node
+        /// having a distance of 0. Every cycle of the algorithm will check which node in the unvisited list has the
+        /// shortest distance to it, add it to the visited list, then works out the distances to the child nodes from
+        /// that node and if this is a shorter distance, it replaces the distance to that node and sets the previous
+        /// node to the current node. This is repeated until the unvisited list is empty.
+        /// </summary>
+        /// <returns> A string of the shortest path followed by the length of it. </returns>
+        /// <exception cref="FormatException"> Thrown when there is no path between the end and start node. </exception>
         public string Algorithm()
         {
             foreach (Node node in NodePool.GetNodePool())

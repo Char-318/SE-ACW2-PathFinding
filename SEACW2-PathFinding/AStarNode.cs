@@ -45,6 +45,9 @@ namespace SEACW2_PathFinding
             return _previousAStarNode;
         }
         
+        /// <summary>
+        /// Calculates the f value of the node. The f value is the path to this node + the estimated remaining distance.
+        /// </summary>
         public void CalculateF()
         {
             Node previousNode = _previousAStarNode._currentNode;
