@@ -8,7 +8,7 @@ namespace SEACW2_PathFinding
     {
         public NodeObjectPool NodePool = Program.NodePool;
         
-        private Node FormatNodes(string[] nodeInfo)
+        public Node FormatNodes(string[] nodeInfo)
         {
             if (!int.TryParse(nodeInfo[0], out int id))
             {
@@ -32,7 +32,7 @@ namespace SEACW2_PathFinding
             return node;
         }
 
-        private void FormatEdges(string[] edgeInfo, out Node nodeA, out Node nodeB, out int length)
+        public void FormatEdges(string[] edgeInfo, out Node nodeA, out Node nodeB, out int length)
         {
             if (!int.TryParse(edgeInfo[0], out int nodeAId))
             {

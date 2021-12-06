@@ -16,11 +16,16 @@ namespace SEACW2_PathFinding
             FileData fileData = new FileData();
             NodePool = fileData.ReadFile("../../../../ACW2_test_data_01.txt");
             
-            Console.WriteLine("Dijkstra's Algorithm:");
+            Console.WriteLine("BFS Algorithm:");
             Node startNode = NodePool.GetNodePool()[0];
             Node endNode = NodePool.GetNodePool()[11];
+            Bfs bfs = new Bfs(startNode, endNode);
+            string result = bfs.Algorithm();
+            Console.WriteLine(result);
+            
+            Console.WriteLine("Dijkstra's Algorithm:");
             Dijkstra dijkstra = new Dijkstra(startNode, endNode);
-            string result = dijkstra.Algorithm();
+            result = dijkstra.Algorithm();
             Console.WriteLine(result);
 
             Console.WriteLine("A* Algorithm");
