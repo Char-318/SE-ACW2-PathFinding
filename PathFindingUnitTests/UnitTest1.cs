@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SEACW2_PathFinding;
 
@@ -10,7 +8,8 @@ namespace PathFindingUnitTests
     [TestClass]
     public class UnitTest1
     {
-        public static Dijkstra Dijkstra { get; set; }
+        public static Bfs BFS;
+        public static Dijkstra Dijkstra;
         public static NodeObjectPool NodePool;
         public static AStar AStar;
         public static FileData FileData;
@@ -46,9 +45,11 @@ namespace PathFindingUnitTests
             ListOfNodes.Add(nodeD);
             ListOfNodes.Add(nodeE);
             
+            BFS = new Bfs(nodeA, nodeE);
             Dijkstra = new Dijkstra(nodeA, nodeE);
             NodePool = new NodeObjectPool(ListOfNodes);
             Dijkstra.NodePool = NodePool;
+            BFS.NodePool = NodePool;
             AStar = new AStar(nodeA, nodeE);
             FileData = new FileData();
         }
@@ -56,7 +57,9 @@ namespace PathFindingUnitTests
         [TestMethod]
         public void TestBfs()
         {
-            
+            string expected = "A-B-D-E 9";
+            string actual = BFS.Algorithm();
+            Assert.AreEqual(expected, actual);
         }
         
         [TestMethod]
@@ -137,6 +140,29 @@ namespace PathFindingUnitTests
             FileData.FormatEdges(test1, out Node nodeA, out Node nodeB, out int lenth);
             FileData.FormatEdges(test2, out nodeA, out nodeB, out lenth);
             FileData.FormatEdges(test3, out nodeA, out nodeB, out lenth);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(FormatException))]
+        public void TestNoPathBfs()
+        {
+            Node nodeA = new Node(1, "A", 1, 2);
+            Node nodeB = new Node(2, "B", 2, 3);
+            Node nodeC = new Node(3, "C", 4, 5);
+            
+            List<Node> ListOfNodes = new List<Node>();
+            ListOfNodes.Add(nodeA);
+            ListOfNodes.Add(nodeB);
+            ListOfNodes.Add(nodeC);
+            
+            nodeA.AddChildNode(nodeB, 1);
+            nodeB.AddChildNode(nodeA, 1);
+            
+            BFS = new Bfs(nodeA, nodeC);
+            NodePool = new NodeObjectPool(ListOfNodes);
+            BFS.NodePool = NodePool;
+
+            BFS.Algorithm();
         }
 
         [TestMethod]
